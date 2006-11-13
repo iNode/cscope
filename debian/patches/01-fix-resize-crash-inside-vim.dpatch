@@ -1,0 +1,55 @@
+#!/bin/sh /usr/share/dpatch/dpatch-run
+## 01-fix-resize-crash-inside-vim.dpatch taken from upstream BTS
+##
+## DP: Fixes a crash on resize when used inside vim
+## DP: (Closes: #374994)
+
+diff -urpN cscope-15.6.orig/src/main.c cscope-15.6/src/main.c
+--- cscope-15.6.orig/src/main.c	2006-10-21 14:42:04.000000000 +0200
++++ cscope-15.6/src/main.c	2006-10-21 14:44:50.000000000 +0200
+@@ -64,7 +64,7 @@
+ #define DFLT_INCDIR "/usr/include"
+ #endif
+ 
+-static char const rcsid[] = "$Id: main.c,v 1.41 2006/08/20 15:00:34 broeker Exp $";
++static char const rcsid[] = "$Id: main.c,v 1.42 2006/10/10 11:42:17 nhorman Exp $";
+ 
+ /* note: these digraph character frequencies were calculated from possible 
+    printable digraphs in the cross-reference for the C compiler */
+@@ -128,7 +128,8 @@ sigwinch_handler(int sig, siginfo_t *inf
+     (void) sig;
+     (void) info;
+     (void) unused;
+-    ungetch(KEY_RESIZE);
++    if(incurses == YES)
++        ungetch(KEY_RESIZE);
+ }
+ #endif
+ 
+@@ -153,12 +154,6 @@ main(int argc, char **argv)
+     yyout = stdout;
+     /* save the command name for messages */
+     argv0 = argv[0];
+-#if defined(KEY_RESIZE) && !defined(__DJGPP__)
+-    winch_action.sa_sigaction = sigwinch_handler;
+-    sigemptyset(&winch_action.sa_mask);
+-    winch_action.sa_flags = SA_SIGINFO;
+-    sigaction(SIGWINCH,&winch_action,NULL);
+-#endif
+     /* set the options */
+     while (--argc > 0 && (*++argv)[0] == '-') {
+ 	/* HBB 20030814: add GNU-style --help and --version options */
+@@ -403,6 +398,13 @@ cscope: Could not create private temp di
+ 	signal(SIGINT, SIG_IGN);	/* ignore interrupts */
+ 	signal(SIGPIPE, SIG_IGN);/* | command can cause pipe signal */
+ 
++#if defined(KEY_RESIZE) && !defined(__DJGPP__)
++	winch_action.sa_sigaction = sigwinch_handler;
++	sigemptyset(&winch_action.sa_mask);
++	winch_action.sa_flags = SA_SIGINFO;
++	sigaction(SIGWINCH,&winch_action,NULL);
++#endif
++
+ 	/* initialize the curses display package */
+ 	initscr();	/* initialize the screen */
+ 	entercurses();
