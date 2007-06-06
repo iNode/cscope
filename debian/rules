@@ -76,7 +76,6 @@ binary-arch: build install
 	# Prevent CVS metadata from being installed
 	find $(DEST)/usr/share/doc/cscope/contrib/webcscope -type d -name CVS | xargs rm -rf
 	dh_installmenu
-	dh_installemacsen
 	dh_installchangelogs ChangeLog
 	dh_strip
 	dh_compress
