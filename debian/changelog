@@ -1,3 +1,9 @@
+cscope (15.6-4) unstable; urgency=low
+
+  * Fix a typo in xcscope.el (Closes: #438170)
+
+ -- Tobias Klauser <tklauser@access.unizh.ch>  Thu, 16 Aug 2007 13:43:01 +0200
+
 cscope (15.6-3) unstable; urgency=low
 
   * Do not install invasive Emacs startup file 50cscope.el (Closes: #427765)
