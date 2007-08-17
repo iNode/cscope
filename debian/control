@@ -2,7 +2,7 @@ Source: cscope
 Section: devel
 Priority: optional
 Maintainer: Tobias Klauser <tklauser@access.unizh.ch>
-Build-Depends: debhelper (>= 4), dpatch, autotools-dev, bison, flex, libncurses5-dev
+Build-Depends: debhelper (>= 5), dpatch, autotools-dev, bison, flex, libncurses5-dev
 Standards-Version: 3.7.2
 
 Package: cscope

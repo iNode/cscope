@@ -1,8 +1,10 @@
 cscope (15.6-4) unstable; urgency=low
 
   * Fix a typo in xcscope.el (Closes: #438170)
+  * Update debhelper compatibility level from 4 to 5
+  * Do not ignore error messages in the clean target of debian/rules
 
- -- Tobias Klauser <tklauser@access.unizh.ch>  Thu, 16 Aug 2007 13:43:01 +0200
+ -- Tobias Klauser <tklauser@access.unizh.ch>  Fri, 17 Aug 2007 15:34:56 +0200
 
 cscope (15.6-3) unstable; urgency=low
 
