@@ -1,3 +1,10 @@
+cscope (15.6-5) unstable; urgency=low
+
+  * Remove left over Emacs startup file (Closes: #454377)
+  * Update to Standards-Version 3.7.3 (no changes needed)
+
+ -- Tobias Klauser <tklauser@access.unizh.ch>  Thu, 06 Dec 2007 20:06:00 +0100
+
 cscope (15.6-4) unstable; urgency=low
 
   * Fix a typo in xcscope.el (Closes: #438170)

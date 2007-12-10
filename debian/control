@@ -3,7 +3,7 @@ Section: devel
 Priority: optional
 Maintainer: Tobias Klauser <tklauser@access.unizh.ch>
 Build-Depends: debhelper (>= 5), dpatch, autotools-dev, bison, flex, libncurses5-dev
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 
 Package: cscope
 Architecture: any
