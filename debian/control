@@ -4,6 +4,9 @@ Priority: optional
 Maintainer: Tobias Klauser <tklauser@access.unizh.ch>
 Build-Depends: debhelper (>= 5), dpatch, autotools-dev, bison, flex, libncurses5-dev
 Standards-Version: 3.7.3
+Homepage: http://cscope.sourceforge.net
+Vcs-Git: http://git.distanz.ch/scm/debian/pkg-cscope.git
+Vcs-Browser: http://git.distanz.ch/debian/pkg-cscope.git
 
 Package: cscope
 Architecture: any
@@ -25,5 +28,3 @@ Description: Interactively examine a C program source
  Where does the message "out of space" come from?
  Where is this source file in the directory structure?
  What files include this header file?
- .
-  Homepage: <http://cscope.sourceforge.net/>
