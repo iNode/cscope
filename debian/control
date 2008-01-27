@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 5), dpatch, autotools-dev, bison, flex, libncurses5
 Standards-Version: 3.7.3
 Homepage: http://cscope.sourceforge.net
 Vcs-Git: http://git.distanz.ch/scm/debian/pkg-cscope.git
-Vcs-Browser: http://git.distanz.ch/debian/pkg-cscope.git
+Vcs-Browser: http://git.distanz.ch/?p=debian/pkg-cscope.git
 
 Package: cscope
 Architecture: any
