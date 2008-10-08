@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 cleanup_sitestart() {
 	if [ -e /etc/emacs/site-start.d/50cscope.el ]; then
