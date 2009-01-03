@@ -4,7 +4,7 @@ cscope (15.6-7) UNRELEASED; urgency=low
   * Replaced obsolete dh_clean -k with dh_prep in rules.
   * Updated debhelper compatibility level from 5 to 7.
   * Updated to Standards-Version 3.8.0, no changes needed.
-  * Changed maintainer e-mail address.
+  * Changed maintainer email address.
 
  -- Tobias Klauser <tklauser@distanz.ch>  Fri, 02 Jan 2009 18:46:53 +0100
 
