@@ -1,12 +1,14 @@
-cscope (15.6-7) UNRELEASED; urgency=low
+cscope (15.6-7) unstable; urgency=low
 
-  * Do not ignore errors in cscope.preinst. Fixes a lintian warning.
+  * Fix lintian warnings.
+    - Do not ignore errors in cscope.preinst.
+    - Remove invalid symbol from manpage.
   * Replaced obsolete dh_clean -k with dh_prep in rules.
   * Updated debhelper compatibility level from 5 to 7.
   * Updated to Standards-Version 3.8.0, no changes needed.
   * Changed maintainer email address.
 
- -- Tobias Klauser <tklauser@distanz.ch>  Fri, 02 Jan 2009 18:46:53 +0100
+ -- Tobias Klauser <tklauser@distanz.ch>  Sun, 11 Jan 2009 16:07:42 +0100
 
 cscope (15.6-6) unstable; urgency=low
 
