@@ -51,13 +51,11 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_prep
-	dh_installdirs usr/share/emacs/site-lisp
 
 	$(MAKE) install DESTDIR=$(DEST)
 
 	# Install xcscope
 	install -m755 -p contrib/xcscope/cscope-indexer $(DEST)/usr/bin/
-	install -m644 -p contrib/xcscope/xcscope.el $(DEST)/usr/share/emacs/site-lisp/
 
 binary-indep: build install
 # We have nothing to do by default.
@@ -65,6 +63,7 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
+	dh_install
 	dh_installdocs AUTHORS NEWS README TODO
 	dh_installman debian/ocs.1 debian/cscope-indexer.1
 	install -d $(DEST)/usr/share/doc/cscope/contrib/webcscope
@@ -76,6 +75,7 @@ binary-arch: build install
 	# Prevent CVS metadata from being installed
 	find $(DEST)/usr/share/doc/cscope/contrib/webcscope -type d -name CVS | xargs rm -rf
 	dh_installmenu
+	dh_installemacsen
 	dh_installchangelogs ChangeLog
 	dh_strip
 	dh_compress
