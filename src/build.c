@@ -124,7 +124,7 @@ samelist(FILE *oldrefs, char **names, int count)
     }
     /* see if the name list is the same */
     for (i = 0; i < count; ++i) {
-	if (! fgets(oldname, sizeof(oldname), oldrefs)||
+	if ((1 != fscanf(oldrefs," %[^\n]",oldname)) ||
 	    strnotequal(oldname, names[i])) {
 	    return(NO);
 	}
@@ -223,7 +223,7 @@ build(void)
     if (strcmp(currentdir, home) == 0) {
 	strcpy(newdir, "$HOME");
     } else if (strncmp(currentdir, home, strlen(home)) == 0) {
-	sprintf(newdir, "$HOME%s", currentdir + strlen(home));
+	snprintf(newdir, sizeof(newdir), "$HOME%s", currentdir + strlen(home));
     }
     /* sort the source file names (needed for rebuilding) */
     qsort(srcfiles, nsrcfiles, sizeof(char *), compare);
@@ -305,10 +305,11 @@ cscope: -q option mismatch between command line and old symbol database\n");
 	/* see if the list of source files is the same and
 	   none have been changed up to the included files */
 	for (i = 0; i < nsrcfiles; ++i) {
-	    if (! fgets(oldname, sizeof(oldname), oldrefs) ||
-		strnotequal(oldname, srcfiles[i]) ||
-		lstat(srcfiles[i], &statstruct) != 0 ||
-		statstruct.st_mtime > reftime) {
+	    if ((1 != fscanf(oldrefs," %[^\n]",oldname))
+		|| strnotequal(oldname, srcfiles[i])
+		|| (lstat(srcfiles[i], &statstruct) != 0)
+		|| (statstruct.st_mtime > reftime)
+		) {
 		goto outofdate;
 	    }
 	}
@@ -338,8 +339,9 @@ cscope: converting to new symbol database file format\n");
 	scanpast('\t');	/* skip the header */
 	oldfile = getoldfile();
     } else {	/* force cross-referencing of all the source files */
-    force:	reftime = 0;
-    oldfile = NULL;
+    force:	
+	reftime = 0;
+	oldfile = NULL;
     }
     /* open the new cross-reference file */
     if ((newrefs = myfopen(newreffile, "wb")) == NULL) {
@@ -454,7 +456,7 @@ cscope: converting to new symbol database file format\n");
 	}
 	fstat(fileno(postings), &statstruct);
 	fclose(postings);
-	sprintf(sortcommand, "env LC_ALL=C sort -T %s %s", tmpdir, temp1);
+	snprintf(sortcommand, sizeof(sortcommand), "env LC_ALL=C sort -T %s %s", tmpdir, temp1);
 	if ((postings = mypopen(sortcommand, "r")) == NULL) {
 	    fprintf(stderr, "cscope: cannot open pipe to sort command\n");
 	    cannotindex();

@@ -3,7 +3,7 @@ Section: devel
 Priority: optional
 Maintainer: Tobias Klauser <tklauser@distanz.ch>
 Build-Depends: debhelper (>= 7), dpatch, autotools-dev, bison, flex, libncurses5-dev
-Standards-Version: 3.8.0
+Standards-Version: 3.8.1
 Homepage: http://cscope.sourceforge.net
 Vcs-Git: http://git.distanz.ch/scm/debian/pkg-cscope.git
 Vcs-Browser: http://git.distanz.ch/?p=debian/pkg-cscope.git

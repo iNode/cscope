@@ -49,7 +49,7 @@
 #include <curses.h>
 #endif
 
-static char const rcsid[] = "$Id: exec.c,v 1.10 2006/04/21 10:45:48 broeker Exp $";
+static char const rcsid[] = "$Id: exec.c,v 1.12 2009/04/10 13:39:23 broeker Exp $";
 
 static	sighandler_t oldsigquit; /* old value of quit signal */
 static	sighandler_t oldsighup; /* old value of hangup signal */
@@ -99,7 +99,7 @@ execute(char *a, ...)	/* note: "exec" is already defined on u370 */
 # ifndef __DJGPP__ /* leave CRLF handling as is */      
 	nonl();
 # endif
-	cbreak();	/* endwin() turns off cbreak mode so restore it */
+	raw();	/* endwin() turns off cbreak mode so restore it */
 	noecho();
 #endif
 	mousemenu();
@@ -123,7 +123,7 @@ myexecvp(char *a, char **args)
 
     /* execute the program or shell script */
     execvp(a, args);	/* returns only on failure */
-    sprintf(msg, "\nCannot exec %s", a);
+    snprintf(msg, sizeof(msg), "\nCannot exec %s", a);
     perror(msg);		/* display the reason */
     askforreturn();		/* wait until the user sees the message */
     myexit(1);		/* exit the child */

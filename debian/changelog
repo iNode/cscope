@@ -1,3 +1,14 @@
+cscope (15.7a-1) unstable; urgency=high
+
+  * New upstream release.
+    - Security update for CVE-2009-0148 to fix multiple buffer overflows
+      (Closes: #528510).
+    - Drop 01-fix-resize-crash-inside-vim.dpatch, merged upstream.
+  * Correctly install xcscope.el via dh_installemacsen (Closes: #515164).
+  * Update to Standards-Version 3.8.1, no changes needed.
+
+ -- Tobias Klauser <tklauser@distanz.ch>  Sun, 24 May 2009 12:13:47 +0200
+
 cscope (15.6-7) unstable; urgency=low
 
   * Fix lintian warnings.

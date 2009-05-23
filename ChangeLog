@@ -1,3 +1,115 @@
+2009-04-10  Hans-Bernhard Broeker  <broeker@physik.rwth-achen.de>
+
+	* src/snprintf.c: Replacement implementation for missing snprintf
+	and vsprintf, from www.jhweiss.de.
+	
+	* acinclude: New macros to optionally activate a replacement for
+	missing snprintf and vsprintf, from www.jhweiss.de.
+
+	* configure.in: Call new macros for snprintf and vsprintf.  Drop
+	AC_FUNC_LSTAT in turn, since it would have required a replacement
+	implementation for lstat().
+
+	* src/Makefile.am (cscope_LDADD): Added LIBOBJS to automatically
+	include snprintf.o in the build if and only if needed.
+
+	* configure, config.h.in, aclocal.m4, Makefile.in,
+	contrib/Makefile.in, doc/Makefile.in, src/Makefile.in:
+	Regenerated.
+
+	* src/global.h: Add prototypes for replacement snprintf and
+	vsnprintf.
+	
+	* src/*.c: Replace all calls of sprintf by snprintf to avoid
+	possible buffer overflows.
+
+2008-06-30  Hans-Bernhard Broeker  <broeker@physik.rwth-achen.de>
+
+	* aclocal.m4, configure, config.h.in, Makefile.in,
+	src/Makefile.in, doc/Makefile.in, contrib/Makefile.in: Regenerated
+	by recent autotools.
+
+	* compile, config.guess, config.sub, depcomp, install-sh, missing,
+	mkinstalldirs, ylwrap: Updated to version provided by recent
+	autotools.
+
+	* INSTALL.gnu: GNU installation instructions.
+
+	* src/global.h (tempstring): Fix mismatch of declaration with
+	definition.
+
+2008-04-11  Neil Horman            <nhorman@tuxdriver.com>
+	* src/main.c, src/exec.c : configure ncurses to operate in raw
+	mode so that ctrl-c (toggle case sensitivity) isn't swallowed by
+	the terminal driver
+
+2008-03-12  Hans-Bernhard Broeker  <broeker@physik.rwth-achen.de>
+
+	* src/build.c (samelist): Previous fix broke handling of blanks in
+	directory names.
+	(build): Apply the same fix to other occurence of the same code.
+
+2008-03-10  Neil Horman		   <nhorman@tuxdriver.com>
+
+	* src/build.c: Fix Samelist to properly absorb newlines so that
+	inverted indicies aren't always rebuilt
+
+2008-02-14  Neil Horman		   <nhorman@tuxdriver.com>
+
+	* src/dir.c: Fix up issrcfile to identify hpp/hxx files as
+	standard c++ source files
+
+	* src/main.c: Add myexit as a handler for SIGTERM, to clean up
+	temp files on TERM
+
+2007-12-03  Hans-Bernhard Broeker  <broeker@physik.rwth-achen.de>
+
+	* doc/cscope.1: Grammar corrections [SF patch #1843711] and troff
+	syntax fixes [from ESR].
+
+2007-03-10  Hans-Bernhard Broeker  <broeker@physik.rwth-achen.de>
+
+	* src/scanner.l (comment_input): Translate EOF to LEXEOF in this
+	case, too.
+	(input, noncommentinput): Spell out LEXEOF instead of a magic
+	number 0.
+
+2007-02-09  Neil Horman		   <nhorman@tuxdriver.com>
+
+	* doc/xcscope.1: Added man page for xcscope utility in contrib
+
+2007-01-07  Hans-Bernhard Broeker  <broeker@physik.rwth-achen.de>
+
+	* src/fscanner.l: Avoid a -Wunused warning by disabling the
+	yy_topstate() function.
+
+	* README: Add a warning about the intended user audience not
+	including superusers or anonymous ones.
+
+	* contrib/webcscope/cscope: Find perl in /usr/bin, which should be
+	more likely as its installation position these days.  Put a big
+	red reminder to the top of the generated HTML page warning about
+	the security issues involved with webcscope.  Thanks to V-Li and
+	the Gentoo folks for the patch.
+	
+2006-10-23  Neil Horman		   <nhorman@tuxdriver.com>
+
+	* src/main.c: Update sigwinch_handler to only register if linemode
+	is not specified (SF bug 1574354)
+
+2006-10-15  Hans-Bernhard Broeker  <broeker@physik.rwth-achen.de>
+
+	* src/dir.c (accessible_file): New function to test for file
+	readability more strictly than just access().
+	(inviewpath): Use it to avoid unreadable files (directories, in
+	particular) getting into the srcfilelist, and thus hopefully fix
+	SF bug #1173768.
+	
+2006-10-10  Neil Horman            <nhorman@tuxdriver.com>
+
+	* src/main.c: Updated sigwinch_handler to not run in the event
+	that curses is not running to avoid crash (SF bug 1574354)
+
 2006-09-30  Hans-Bernhard Broeker  <broeker@physik.rwth-aachen.de>
 
 	* src/fscanner.l (wsnl): Expand set of allowed characters to make

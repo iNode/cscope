@@ -64,7 +64,7 @@
 #define DFLT_INCDIR "/usr/include"
 #endif
 
-static char const rcsid[] = "$Id: main.c,v 1.41 2006/08/20 15:00:34 broeker Exp $";
+static char const rcsid[] = "$Id: main.c,v 1.46 2009/04/10 13:39:23 broeker Exp $";
 
 /* note: these digraph character frequencies were calculated from possible 
    printable digraphs in the cross-reference for the C compiler */
@@ -128,7 +128,8 @@ sigwinch_handler(int sig, siginfo_t *info, void *unused)
     (void) sig;
     (void) info;
     (void) unused;
-    ungetch(KEY_RESIZE);
+    if(incurses == YES)
+        ungetch(KEY_RESIZE);
 }
 #endif
 
@@ -153,12 +154,7 @@ main(int argc, char **argv)
     yyout = stdout;
     /* save the command name for messages */
     argv0 = argv[0];
-#if defined(KEY_RESIZE) && !defined(__DJGPP__)
-    winch_action.sa_sigaction = sigwinch_handler;
-    sigemptyset(&winch_action.sa_mask);
-    winch_action.sa_flags = SA_SIGINFO;
-    sigaction(SIGWINCH,&winch_action,NULL);
-#endif
+
     /* set the options */
     while (--argc > 0 && (*++argv)[0] == '-') {
 	/* HBB 20030814: add GNU-style --help and --version options */
@@ -359,7 +355,7 @@ cscope: TMPDIR to a valid directory\n");
     /* create the temporary file names */
     orig_umask = umask(S_IRWXG|S_IRWXO);
     pid = getpid();
-    sprintf(tempdirpv, "%s/cscope.%d", tmpdir, pid);
+    snprintf(tempdirpv, sizeof(tempdirpv), "%s/cscope.%d", tmpdir, pid);
     if(mkdir(tempdirpv,S_IRWXU)) {
 	fprintf(stderr, "\
 cscope: Could not create private temp dir %s\n",
@@ -368,8 +364,8 @@ cscope: Could not create private temp dir %s\n",
     }
     umask(orig_umask);
 
-    sprintf(temp1, "%s/cscope.1", tempdirpv);
-    sprintf(temp2, "%s/cscope.2", tempdirpv);
+    snprintf(temp1, sizeof(temp1), "%s/cscope.1", tempdirpv);
+    snprintf(temp2, sizeof(temp2), "%s/cscope.2", tempdirpv);
 
     /* if running in the foreground */
     if (signal(SIGINT, SIG_IGN) != SIG_IGN) {
@@ -380,6 +376,9 @@ cscope: Could not create private temp dir %s\n",
     /* cleanup on the hangup signal */
     signal(SIGHUP, myexit);
 
+    /* ditto the TERM signal */
+    signal(SIGTERM, myexit);
+
     /* if the database path is relative and it can't be created */
     if (reffile[0] != '/' && access(".", WRITE) != 0) {
 
@@ -389,12 +388,12 @@ cscope: Could not create private temp dir %s\n",
 	 * used instead of failing to open a non-existant database in
 	 * the home directory
 	 */
-	sprintf(path, "%s/%s", home, reffile);
+	snprintf(path, sizeof(path), "%s/%s", home, reffile);
 	if (isuptodate == NO || access(path, READ) == 0) {
 	    reffile = my_strdup(path);
-	    sprintf(path, "%s/%s", home, invname);
+	    snprintf(path, sizeof(path), "%s/%s", home, invname);
 	    invname = my_strdup(path);
-	    sprintf(path, "%s/%s", home, invpost);
+	    snprintf(path, sizeof(path), "%s/%s", home, invpost);
 	    invpost = my_strdup(path);
 	}
     }
@@ -402,6 +401,13 @@ cscope: Could not create private temp dir %s\n",
     if (linemode == NO) {
 	signal(SIGINT, SIG_IGN);	/* ignore interrupts */
 	signal(SIGPIPE, SIG_IGN);/* | command can cause pipe signal */
+
+#if defined(KEY_RESIZE) && !defined(__DJGPP__)
+	winch_action.sa_sigaction = sigwinch_handler;
+	sigemptyset(&winch_action.sa_mask);
+	winch_action.sa_flags = SA_SIGINFO;
+	sigaction(SIGWINCH,&winch_action,NULL);
+#endif
 
 	/* initialize the curses display package */
 	initscr();	/* initialize the screen */
@@ -728,21 +734,11 @@ cannotopen(char *file)
 void
 cannotwrite(char *file)
 {
-#if HAVE_SNPRINTF
     char	msg[MSGLEN + 1];
 
     snprintf(msg, sizeof(msg), "Removed file %s because write failed", file);
-#else
-    char *msg = mymalloc(50 + strlen(file));
-
-    sprintf(msg, "Removed file %s because write failed", file);
-#endif
 
     myperror(msg);	/* display the reason */
-
-#if !HAVE_SNPRINTF
-    free(msg);
-#endif
 
     unlink(file);
     myexit(1);	/* calls exit(2), which closes files */
@@ -793,7 +789,7 @@ entercurses(void)
 #ifndef __MSDOS__ /* HBB 20010313 */
     nonl();		    /* don't translate an output \n to \n\r */
 #endif
-    cbreak();			/* single character input */
+    raw();			/* single character input */
     noecho();			/* don't echo input characters */
     clear();			/* clear the screen */
     mouseinit();		/* initialize any mouse interface */
