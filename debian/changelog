@@ -1,3 +1,10 @@
+cscope (15.7a-2) unstable; urgency=low
+
+  * Correctly install and remove emacs library file (closes: #515164). Thanks
+    to Benoit Izac for the patch.
+
+ -- Tobias Klauser <tklauser@distanz.ch>  Tue, 20 Oct 2009 20:51:39 +0200
+
 cscope (15.7a-1) unstable; urgency=high
 
   * New upstream release.

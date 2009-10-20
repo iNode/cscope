@@ -8,7 +8,7 @@ PACKAGE=cscope
 
 ELDIR=/usr/share/emacs/site-lisp/
 ELCDIR=/usr/share/$FLAVOUR/site-lisp/$PACKAGE
-ELFILE="xscope.el"
+ELFILE="xcscope.el"
 FLAGS="-batch -no-site-file -l path.el -f batch-byte-compile"
 
 if [ $FLAVOUR != emacs ]; then
