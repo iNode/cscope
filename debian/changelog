@@ -2,11 +2,13 @@ cscope (15.7a-2) unstable; urgency=low
 
   * Correctly install and remove emacs library file (closes: #515164). Thanks
     to Benoit Izac for the patch.
+  * Update handling of config.{guess,sub} in debian/rules according to the
+    autotools-dev README.Debian. This fixes a lintian warning.
   * Add README.source file (text taken from
     /usr/share/doc/dpatch/README.source)
   * Update to Standards-Version 3.8.3
 
- -- Tobias Klauser <tklauser@distanz.ch>  Wed, 21 Oct 2009 13:29:16 +0200
+ -- Tobias Klauser <tklauser@distanz.ch>  Wed, 21 Oct 2009 13:57:34 +0200
 
 cscope (15.7a-1) unstable; urgency=high
 
