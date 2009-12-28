@@ -10,7 +10,7 @@ Vcs-Browser: http://git.distanz.ch/?p=debian/pkg-cscope.git
 
 Package: cscope
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, emacsen-common
 Suggests: cbrowser
 Description: Interactively examine a C program source
  Cscope is an interactive text screen based source browsing tool.

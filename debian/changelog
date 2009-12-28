@@ -1,3 +1,10 @@
+cscope (15.7a-3) unstable; urgency=low
+
+  * Depend on emacsen-common to be able to install xcscope.el correctly
+    (Closes: #562550).
+
+ -- Tobias Klauser <tklauser@distanz.ch>  Mon, 28 Dec 2009 18:01:10 +0100
+
 cscope (15.7a-2) unstable; urgency=low
 
   * Correctly install and remove emacs library file (closes: #515164). Thanks
