@@ -2,8 +2,9 @@ cscope (15.7a-3) unstable; urgency=low
 
   * Depend on emacsen-common to be able to install xcscope.el correctly
     (Closes: #562550).
+  * Fix spelling error in ocs.1 manpage (this fixes a lintian warning).
 
- -- Tobias Klauser <tklauser@distanz.ch>  Mon, 28 Dec 2009 18:01:10 +0100
+ -- Tobias Klauser <tklauser@distanz.ch>  Mon, 04 Jan 2010 14:14:43 +0100
 
 cscope (15.7a-2) unstable; urgency=low
 
