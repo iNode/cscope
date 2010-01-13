@@ -2,9 +2,11 @@ cscope (15.7a-3) unstable; urgency=low
 
   * Depend on emacsen-common to be able to install xcscope.el correctly
     (Closes: #562550).
+  * Add ${misc:Depends} to Depends field in control (this fixes a lintian
+    warning).
   * Fix spelling error in ocs.1 manpage (this fixes a lintian warning).
 
- -- Tobias Klauser <tklauser@distanz.ch>  Mon, 04 Jan 2010 14:14:43 +0100
+ -- Tobias Klauser <tklauser@distanz.ch>  Wed, 13 Jan 2010 18:08:30 +0100
 
 cscope (15.7a-2) unstable; urgency=low
 
