@@ -1,3 +1,10 @@
+cscope (15.7a-4) unstable; urgency=low
+
+  * Update Standards-Version to 3.8.4.
+  * Use git:// URI in Vcs-Git control field.
+
+ -- Tobias Klauser <tklauser@distanz.ch>  Mon, 01 Feb 2010 13:40:31 +0100
+
 cscope (15.7a-3) unstable; urgency=low
 
   * Depend on emacsen-common to be able to install xcscope.el correctly
