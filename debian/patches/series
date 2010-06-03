@@ -2,3 +2,4 @@
 03-fix-ocs-bashisms.patch
 04-fix-manpage-warning.patch
 debian-changes-15.7a-3.1
+debian-changes-15.7a-4
