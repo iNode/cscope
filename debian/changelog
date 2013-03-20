@@ -1,12 +1,23 @@
-cscope (15.7a-4) unstable; urgency=low
+cscope (15.8a-1.1) unstable; urgency=low
 
+  * Non-maintainer upload
+
+  [ Dima Kogan ]
+  * Imported Upstream version 15.8a (Closes: #689198)
+  * Split upstream source to a git branch to work with git-buildpackage
+  * Using pristine-tar to keep track of the upstream source
+  * Using dh-autoreconf to manage autotools files
+  * upgraded cscope-el install/remove scripts (Closes: #672194)
+  * cscope-el now doesn't depend on any emacsen
+
+  [ Tobias Klauser ]
   * Acknowledge NMU. Thanks to Jari Aalto and Tony Mancill.
   * Move emacs-install and emacs-remove from cscope to cscope-el package.
     Also make cscope suggest cscope-el (Closes: #582964).
   * Update Standards-Version to 3.8.4.
-  * Use git:// URI in Vcs-Git control field.
+  * Use git:// URI in Vcs-Git control field (Closes: #653605)
 
- -- Tobias Klauser <tklauser@distanz.ch>  Thu, 03 Jun 2010 15:47:49 +0200
+ -- Dima Kogan <dima@secretsauce.net>  Wed, 20 Mar 2013 18:17:05 -1000
 
 cscope (15.7a-3.1) unstable; urgency=low
 
