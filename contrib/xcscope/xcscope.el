@@ -941,6 +941,9 @@ Must end with a newline.")
   (define-key cscope-list-entry-keymap "P" 'cscope-prev-file)
   (define-key cscope-list-entry-keymap "u" 'cscope-pop-mark)
   ;; ---
+  (define-key cscope-list-entry-keymap "v" 'cscope-history-backward)
+  (define-key cscope-list-entry-keymap "V" 'cscope-history-forward)
+  ;; ---
   (define-key cscope-list-entry-keymap "a" 'cscope-set-initial-directory)
   (define-key cscope-list-entry-keymap "A" 'cscope-unset-initial-directory)
   ;; ---
@@ -991,6 +994,22 @@ Must end with a newline.")
   "A buffer for holding partial cscope process output.")
 (make-variable-buffer-local 'cscope-process-output)
 
+(defvar cscope-history-result nil
+  "Stores result of current search")
+
+(defvar cscope-history-directory nil
+  "Stores the directory in which current search was launced")
+
+(defvar cscope-history-msg nil
+  "Stores the command issue for cscope")
+
+(defconst cscope-history-ring-size 66)
+
+(defvar cscope-history-ring (make-ring cscope-history-ring-size)
+  "A list holds history of each search")
+
+(defvar cscope-history-ring-pos nil
+  "Point to current position")
 
 (defvar cscope-command-args nil
   "Internal variable for holding major command args to pass to cscope.")
@@ -1135,6 +1154,8 @@ directory should begin.")
   (define-key cscope:map "\C-csp" 'cscope-prev-symbol)
   (define-key cscope:map "\C-csP" 'cscope-prev-file)
   (define-key cscope:map "\C-csu" 'cscope-pop-mark)
+  (define-key cscope:map "\C-csv" 'cscope-history-backward)
+  (define-key cscope:map "\C-csV" 'cscope-history-forward)
   ;; ---
   (define-key cscope:map "\C-csa" 'cscope-set-initial-directory)
   (define-key cscope:map "\C-csA" 'cscope-unset-initial-directory)
@@ -1175,6 +1196,8 @@ directory should begin.")
 		    [ "Previous symbol" 	cscope-prev-symbol t ]
 		    [ "Previous file"   	cscope-prev-file t ]
 		    [ "Pop mark"        	cscope-pop-mark t ]
+		    [ "View history backward"    cscope-history-backward t ]
+		    [ "View history forward"     cscope-history-forward t ]
 		    "-----------"
 		    ( "Cscope Database"
 		      [ "Set initial directory"
@@ -1527,6 +1550,76 @@ Point is not saved on mark ring."
   (interactive)
   (cscope-buffer-search nil nil))
 
+(defun cscope-history-clear ()
+  "Clear the history"
+  (interactive)
+  (setq cscope-history-result nil)
+  (setq cscope-history-directory nil)
+  (setq cscope-history-msg nil)
+  (while (not (ring-empty-p cscope-history-ring))
+    (ring-remove cscope-history-ring))
+  (setq cscope-history-ring-pos nil)
+)
+
+(defun cscope-history-delete ()
+  "Delete current history record"
+  (interactive)
+  (ring-remove cscope-history-ring cscope-history-ring-pos)
+  (ring-minus1  cscope-history-ring-pos (ring-length cscope-history-ring))
+)
+
+(defun cscope-history-backward ()
+  "View previous search result"
+  (interactive)
+  (cscope-history-browse 'ring-plus1)
+)
+
+(defun cscope-history-forward ()
+  "View next(later) search result"
+  (interactive)
+  (cscope-history-browse 'ring-minus1)
+)
+
+(defun cscope-history-browse (direction)
+  "Browsing search history either forward or backward."
+
+  (if cscope-process
+      (error "A cscope search is still in progress -- can't retrieve previous result now"))
+
+  (if (ring-empty-p cscope-history-ring)
+      (error "No history in history ring"))
+
+  ;; save current result first, and this implies that we will have at
+  ;; least TWO elements in history ring when we really started to deal
+  ;; with the history ring
+  (if cscope-history-result
+      (progn
+        (ring-insert cscope-history-ring
+                     (list cscope-history-msg cscope-history-directory cscope-history-result))
+        (setq cscope-history-result nil))
+    )
+
+  (if (not cscope-history-ring-pos)
+      (setq cscope-history-ring-pos 0))
+
+  ;; move either forward or backward in the cscope history
+  (setq cscope-history-ring-pos
+        (funcall direction cscope-history-ring-pos
+                 (ring-length cscope-history-ring)))
+
+  ;; If wrapped around, give some clue.
+  (if (eq direction 'ring-plus1)
+      (if (eq cscope-history-ring-pos 0)
+          (progn (beep) (message "Beyond oldest history, wrapped to latest one")))
+
+    (if (eq cscope-history-ring-pos
+            (1- (ring-length cscope-history-ring)) )
+        (progn (beep) (message "Beyond latest history, wrapped to oldest one")))
+    )
+
+  (cscope-process-history (ring-ref
+                           cscope-history-ring cscope-history-ring-pos))
+  )
 
 (defun cscope-pop-mark ()
   "Pop back to where cscope was last invoked."
@@ -1746,6 +1839,8 @@ using the mouse."
 		;; Get a line
 		(setq line (substring cscope-process-output
 				      (match-beginning 1) (match-end 1)))
+
+		(setq cscope-history-result (concat cscope-history-result line))
 		(setq cscope-process-output (substring cscope-process-output
 						       (match-beginning 2)
 						       (match-end 2)))
@@ -1818,6 +1913,106 @@ using the mouse."
 	    ))
       (set-buffer old-buffer))
     ))
+
+
+(defun cscope-process-history (cscope-history)
+  "Much the same as cscope-process-filter except that it deal with
+  string. "
+  (let (file function-name line line-number
+             (history-string (nth 2 cscope-history))
+             (the-buffer (get-buffer cscope-output-buffer-name))
+             )
+
+    (if the-buffer
+        (pop-to-buffer the-buffer)
+      (error "The *cscope* buffer does not exist yet"))
+    (let (buffer-read-only)
+      (buffer-disable-undo)
+      (erase-buffer)
+
+      (setq default-directory (cscope-canonicalize-directory (nth 1 cscope-history)))
+
+      (insert "====== Search History ======\n\n"
+              (car cscope-history) "\n\n"
+              "Database directory: " default-directory "\n"
+              "------------------------------------\n\n")
+      (setq cscope-last-file nil)       ; So that print the file name
+
+      ;; Slice and dice it into lines.
+      ;; While there are whole lines left ...
+      (while (and history-string
+                  (string-match "\\([^\n]+\n\\)" history-string))
+        ;; string-match "\\([^\n]+\n\\)\\(\\(.\\|\n\\)*\\)" may
+        ;; stack-overflow if history-string too long
+        (setq file nil)
+        ;; Get a line
+        (setq line (substring history-string
+                              (match-beginning 1) (match-end 1)))
+        (setq history-string (substring history-string
+                                        (match-end 1) ))
+        (if (= (length history-string) 0)
+            (setq history-string nil))
+
+        ;; This should always match.
+        (if (string-match
+             "^\\([^ \t]+\\)[ \t]+\\([^ \t]+\\)[ \t]+\\([0-9]+\\)[ \t]+\\(.*\\)\n"
+             line)
+            (progn
+              (let (str)
+                (setq file (substring line (match-beginning 1)
+                                      (match-end 1))
+                      function-name (substring line (match-beginning 2)
+                                               (match-end 2))
+                      line-number (substring line (match-beginning 3)
+                                             (match-end 3))
+                      line (substring line (match-beginning 4)
+                                      (match-end 4))
+                      )
+                ;; If the current file is not the same as the previous
+                ;; one ...
+                (if (not (and cscope-last-file
+                              (string= file cscope-last-file)))
+                    (progn
+                      ;; The current file is different.
+
+                      ;; Insert a separating blank line if
+                      ;; necessary.
+                      (if cscope-last-file (insert "\n"))
+                      ;; Insert the file name
+                      (setq str (concat "*** " file ":"))
+                      (if cscope-use-face
+                          (put-text-property 0 (length str)
+                                             'face 'cscope-file-face
+                                             str))
+                      (cscope-insert-with-text-properties
+                       str
+                       (expand-file-name file)
+                       ;; Yes, -1 is intentional
+                       -1)
+                      (insert "\n")
+                      ))
+                (if (not cscope-first-match)
+                    (setq cscope-first-match-point (point)))
+                ;; ... and insert the line, with the
+                ;; appropriate indentation.
+                (cscope-insert-with-text-properties
+                 (cscope-make-entry-line function-name
+                                         line-number
+                                         line)
+                 (expand-file-name file)
+                 line-number)
+                (insert "\n")
+                (setq cscope-last-file file)
+                (if cscope-first-match
+                    (setq cscope-matched-multiple t)
+                  (setq cscope-first-match
+                        (cons (expand-file-name file)
+                              (string-to-number line-number))))
+                ))
+          (insert line "\n")))
+      (set-buffer-modified-p nil)
+      (goto-char (point-min))
+      )))
 
 
 (defun cscope-process-sentinel (process event)
@@ -1981,6 +2176,8 @@ using the mouse."
 	  (insert "\nDatabase directory/file: "
 		  cscope-directory base-database-file-name "\n"
 		  cscope-separator-line))
+	;; store the directory for history
+	(setq cscope-history-directory cscope-directory)
 	;; Add the correct database file to search
 	(setq options (cons base-database-file-name options))
 	(setq options (cons "-f" options))
@@ -2020,6 +2217,16 @@ SENTINEL-FUNC are optional process filter and sentinel, respectively."
          (old-buffer (current-buffer)) )
     (if cscope-process
 	(error "A cscope search is still in progress -- only one at a time is allowed"))
+
+    ;; Before going on, push last search result into output ring
+    (if cscope-history-result
+        (ring-insert cscope-history-ring
+                     (list cscope-history-msg cscope-history-directory cscope-history-result)))
+    ;; and update registers
+    (setq cscope-history-msg msg)
+    (setq cscope-history-result nil)
+    (setq cscope-history-ring-pos 0)
+
     (setq directory (cscope-canonicalize-directory
                      (or cscope-initial-directory directory)))
     (if (eq outbuf old-buffer) ;; In the *cscope* buffer.
