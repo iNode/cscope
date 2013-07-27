@@ -2311,12 +2311,12 @@ file."
   (interactive (list
 		(cscope-prompt-for-symbol "Find this symbol: " nil)
 		))
-  (let ( (cscope-adjust t) )	 ;; Use fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding symbol: %s" symbol)
-		 (list "-0" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust t)	 ;; Use fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding symbol: %s" symbol)
+               (list "-0" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 (defun cscope-find-global-definition (symbol)
@@ -2324,19 +2324,19 @@ file."
   (interactive (list
 		(cscope-prompt-for-symbol "Find this global definition: " nil)
 		))
-  (let ( (cscope-adjust t) )	 ;; Use fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding global definition: %s" symbol)
-		 (list "-1" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust t)	 ;; Use fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding global definition: %s" symbol)
+               (list "-1" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 (defun cscope-find-global-definition-no-prompting ()
   "Find a symbol's global definition without prompting."
   (interactive)
-  (let ( (symbol (cscope-extract-symbol-at-cursor nil))
-	 (cscope-adjust t) )	 ;; Use fuzzy matching.
+  (let ( (symbol (cscope-extract-symbol-at-cursor nil)))
+    (setq cscope-adjust t)       ;; Use fuzzy matching.
     (setq cscope-symbol symbol)
     (cscope-call (format "Finding global definition: %s" symbol)
 		 (list "-1" symbol) nil 'cscope-process-filter
@@ -2350,12 +2350,12 @@ file."
 		(cscope-prompt-for-symbol
 		 "Find functions called by this function: " nil)
 		))
-  (let ( (cscope-adjust nil) )	 ;; Disable fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding functions called by: %s" symbol)
-		 (list "-2" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust nil)	 ;; Disable fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding functions called by: %s" symbol)
+               (list "-2" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 (defun cscope-find-functions-calling-this-function (symbol)
@@ -2364,12 +2364,12 @@ file."
 		(cscope-prompt-for-symbol
 		 "Find functions calling this function: " nil)
 		))
-  (let ( (cscope-adjust t) )	 ;; Use fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding functions calling: %s" symbol)
-		 (list "-3" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust t)	 ;; Use fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding functions calling: %s" symbol)
+               (list "-3" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 (defun cscope-find-this-text-string (symbol)
@@ -2377,12 +2377,12 @@ file."
   (interactive (list
 		(cscope-prompt-for-symbol "Find this text string: " nil)
 		))
-  (let ( (cscope-adjust t) )	 ;; Use fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding text string: %s" symbol)
-		 (list "-4" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust t)	 ;; Use fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding text string: %s" symbol)
+               (list "-4" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 (defun cscope-find-egrep-pattern (symbol)
@@ -2391,12 +2391,12 @@ file."
 		(let (cscope-no-mouse-prompts)
 		  (cscope-prompt-for-symbol "Find this egrep pattern: " nil))
 		))
-  (let ( (cscope-adjust t) )	 ;; Use fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding egrep pattern: %s" symbol)
-		 (list "-6" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust t)	 ;; Use fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding egrep pattern: %s" symbol)
+               (list "-6" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 (defun cscope-find-this-file (symbol)
@@ -2405,12 +2405,12 @@ file."
 		(let (cscope-no-mouse-prompts)
 		  (cscope-prompt-for-symbol "Find this file: " t))
 		))
-  (let ( (cscope-adjust nil) )	 ;; Disable fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding file: %s" symbol)
-		 (list "-7" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust nil)	 ;; Disable fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding file: %s" symbol)
+               (list "-7" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 (defun cscope-find-files-including-file (symbol)
@@ -2420,12 +2420,12 @@ file."
 		  (cscope-prompt-for-symbol
 		   "Find files #including this file: " t))
 		))
-  (let ( (cscope-adjust t) )	;; Use fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding files #including file: %s" symbol)
-		 (list "-8" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust t)	;; Use fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding files #including file: %s" symbol)
+               (list "-8" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 (defun cscope-find-assignments-to-this-symbol (symbol)
@@ -2433,12 +2433,12 @@ file."
   (interactive (list
 		(cscope-prompt-for-symbol "Find assignments to this symbol: " nil)
 		))
-  (let ( (cscope-adjust t) )	 ;; Use fuzzy matching.
-    (setq cscope-symbol symbol)
-    (cscope-call (format "Finding assignments to symbol: %s" symbol)
-		 (list "-9" symbol) nil 'cscope-process-filter
-		 'cscope-process-sentinel)
-    ))
+  (setq cscope-adjust t)	 ;; Use fuzzy matching.
+  (setq cscope-symbol symbol)
+  (cscope-call (format "Finding assignments to symbol: %s" symbol)
+               (list "-9" symbol) nil 'cscope-process-filter
+               'cscope-process-sentinel)
+  )
 
 
 
