@@ -860,7 +860,8 @@ putsource(int seemore, FILE *output)
 	char *tmpblockp;
 	char	*cp, nextc = '\0';
 	BOOL Change = NO, retreat = NO;
-	
+	long blocknumber_return;
+
 	if (fileversion <= 5) {
 		(void) scanpast(' ');
 		putline(output);
@@ -896,6 +897,7 @@ putsource(int seemore, FILE *output)
 				blockp > tmpblockp) {
 					Change = YES;
 					cp = blockp;
+					blocknumber_return = blocknumber;
 			}
 			skiprefchar();
 			skiprefchar();
@@ -905,7 +907,7 @@ putsource(int seemore, FILE *output)
 		if (retreat == YES) retreat = NO;
 	} while (blockp != NULL && getrefchar() != '\n');
 	(void) putc('\n', output);
-	if (Change == YES) blockp = cp;
+	if (Change == YES) dbseek( blocknumber_return * BUFSIZ + cp - block );
 }
 
 /* put the rest of the cross-reference line into the file */
