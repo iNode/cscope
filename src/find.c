@@ -859,8 +859,8 @@ putsource(int seemore, FILE *output)
 {
 	char *tmpblockp;
 	char	*cp, nextc = '\0';
-	BOOL Change = NO, retreat = NO;
-	long blocknumber_return;
+	BOOL Change = NO;
+	long blocknumber_return, tmpblocknumber;
 
 	if (fileversion <= 5) {
 		(void) scanpast(' ');
@@ -870,10 +870,11 @@ putsource(int seemore, FILE *output)
 	}
 	/* scan back to the beginning of the source line */
 	cp = tmpblockp = blockp;
+	tmpblocknumber = blocknumber;
+
 	while (*cp != '\n' || nextc != '\n') {
 		nextc = *cp;
 		if (--cp < block) {
-			retreat = YES;
 			/* read the previous block */
 			(void) dbseek((blocknumber - 1) * BUFSIZ);
 			cp = &block[BUFSIZ - 1];
@@ -889,11 +890,11 @@ putsource(int seemore, FILE *output)
 	do {
 		/* skip a symbol type */
 		if (*blockp == '\t') {
-			/* if retreat == YES, that means tmpblockp and blockp
+			/* if blocknumber != tmpblocknumber, that means tmpblockp and blockp
 			 * point to different blocks.  Offset comparison should
 			 * NOT be performed until they point to the same block.
 			 */
- 			if (seemore && Change == NO && retreat == NO &&
+			if (seemore && Change == NO && blocknumber == tmpblocknumber &&
 				blockp > tmpblockp) {
 					Change = YES;
 					cp = blockp;
@@ -904,7 +905,6 @@ putsource(int seemore, FILE *output)
 		}
 		/* output a piece of the source line */
 		putline(output);
-		if (retreat == YES) retreat = NO;
 	} while (blockp != NULL && getrefchar() != '\n');
 	(void) putc('\n', output);
 	if (Change == YES) dbseek( blocknumber_return * BUFSIZ + cp - block );
