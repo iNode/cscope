@@ -645,7 +645,7 @@ if{wsnl}*\(	{ 	/* ignore 'if' */
 				   tag isn't marked as the typedef name) */
 				else if (s == enumtext || s == structtext || s == uniontext) {
 					/* do nothing */
-				} else if (s == externtext) {
+				} else if (s == externtext && ppdefine == NO) {
 					/* if an external definition */
 					externalbraces = braces;
 					external = YES;
