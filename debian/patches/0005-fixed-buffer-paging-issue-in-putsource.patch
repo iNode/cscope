@@ -1,0 +1,56 @@
+From: Dima Kogan <dima@secretsauce.net>
+Date: Sun, 28 Jul 2013 02:12:56 -0700
+Subject: fixed buffer-paging issue in putsource()
+
+This patch fixes a bug where the block number and the block index would get out
+of sync. Inside putsource() there was code that boiled down to this:
+
+	do {
+		if(...) {
+			Change = YES;
+			cp = blockp;
+		}
+
+		putline(output);
+	} while (blockp != NULL && getrefchar() != '\n');
+	if (Change == YES) blockp = cp;
+
+It was possible for putline() to read in a new block. The last line could then
+reset blockp WITHOUT reloading the old block. This effectively skipped a block's
+worth of data resulting in a cscope report with some extra bogus data and some
+missing valid data
+---
+ src/find.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/find.c b/src/find.c
+index d8da542..61fc569 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -860,7 +860,8 @@ putsource(int seemore, FILE *output)
+ 	char *tmpblockp;
+ 	char	*cp, nextc = '\0';
+ 	BOOL Change = NO, retreat = NO;
+-	
++	long blocknumber_return;
++
+ 	if (fileversion <= 5) {
+ 		(void) scanpast(' ');
+ 		putline(output);
+@@ -896,6 +897,7 @@ putsource(int seemore, FILE *output)
+ 				blockp > tmpblockp) {
+ 					Change = YES;
+ 					cp = blockp;
++					blocknumber_return = blocknumber;
+ 			}
+ 			skiprefchar();
+ 			skiprefchar();
+@@ -905,7 +907,7 @@ putsource(int seemore, FILE *output)
+ 		if (retreat == YES) retreat = NO;
+ 	} while (blockp != NULL && getrefchar() != '\n');
+ 	(void) putc('\n', output);
+-	if (Change == YES) blockp = cp;
++	if (Change == YES) dbseek( blocknumber_return * BUFSIZ + cp - block );
+ }
+ 
+ /* put the rest of the cross-reference line into the file */

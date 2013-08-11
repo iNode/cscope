@@ -1,0 +1,62 @@
+From: Dima Kogan <dima@secretsauce.net>
+Date: Tue, 30 Jul 2013 01:14:10 -0700
+Subject: Fixed a bug tickled by the previous commit
+
+putsource() was calling putline(output) and then resetting retreat to NO without
+checking to make sure retreat IS now NO (i.e. whether we're now in the same
+block we were before). Here we get rid of retreat entirely and actually check
+for the thing we care about: which block we are in.
+---
+ src/find.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/find.c b/src/find.c
+index 61fc569..9dd770c 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -859,8 +859,8 @@ putsource(int seemore, FILE *output)
+ {
+ 	char *tmpblockp;
+ 	char	*cp, nextc = '\0';
+-	BOOL Change = NO, retreat = NO;
+-	long blocknumber_return;
++	BOOL Change = NO;
++	long blocknumber_return, tmpblocknumber;
+ 
+ 	if (fileversion <= 5) {
+ 		(void) scanpast(' ');
+@@ -870,10 +870,11 @@ putsource(int seemore, FILE *output)
+ 	}
+ 	/* scan back to the beginning of the source line */
+ 	cp = tmpblockp = blockp;
++	tmpblocknumber = blocknumber;
++
+ 	while (*cp != '\n' || nextc != '\n') {
+ 		nextc = *cp;
+ 		if (--cp < block) {
+-			retreat = YES;
+ 			/* read the previous block */
+ 			(void) dbseek((blocknumber - 1) * BUFSIZ);
+ 			cp = &block[BUFSIZ - 1];
+@@ -889,11 +890,11 @@ putsource(int seemore, FILE *output)
+ 	do {
+ 		/* skip a symbol type */
+ 		if (*blockp == '\t') {
+-			/* if retreat == YES, that means tmpblockp and blockp
++			/* if blocknumber != tmpblocknumber, that means tmpblockp and blockp
+ 			 * point to different blocks.  Offset comparison should
+ 			 * NOT be performed until they point to the same block.
+ 			 */
+- 			if (seemore && Change == NO && retreat == NO &&
++			if (seemore && Change == NO && blocknumber == tmpblocknumber &&
+ 				blockp > tmpblockp) {
+ 					Change = YES;
+ 					cp = blockp;
+@@ -904,7 +905,6 @@ putsource(int seemore, FILE *output)
+ 		}
+ 		/* output a piece of the source line */
+ 		putline(output);
+-		if (retreat == YES) retreat = NO;
+ 	} while (blockp != NULL && getrefchar() != '\n');
+ 	(void) putc('\n', output);
+ 	if (Change == YES) dbseek( blocknumber_return * BUFSIZ + cp - block );

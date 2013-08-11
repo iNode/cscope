@@ -1,3 +1,10 @@
-02-fix-xcscope-el-typo.patch
-03-fix-ocs-bashisms.patch
-04-fix-manpage-warning.patch
+0001-contrib-xcscope-xcscope.el-Fix-typo-Closes-438170.patch
+0002-contrib-ocs-Fix-bashims-Closes-480591.patch
+0003-doc-cscope.1-Fix-hyphens.patch
+0004-added-emacs-binding-to-Find-assignments-to-this-symb.patch
+0005-fixed-buffer-paging-issue-in-putsource.patch
+0006-Fixed-a-bug-tickled-by-the-previous-commit.patch
+0007-fuzzy-matching-now-works-as-intended.patch
+0008-Imported-xcscope.el-history-patch.patch
+0009-return-binding-now-works-in-both-graphical-and-tty-e.patch
+0010-Prototype-fix-for-cscope-bug-288.patch

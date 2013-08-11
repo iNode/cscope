@@ -1,16 +1,11 @@
-From 270908781fcb34a70d60d036836b8908613606e0 Mon Sep 17 00:00:00 2001
 From: Jari Aalto <jari.aalto@cante.net>
 Date: Sat, 8 May 2010 20:16:14 +0300
-Subject: [PATCH] doc/cscope.1: Fix hyphens
-Organization: Private
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-
+Subject: doc/cscope.1: Fix hyphens
 
 Signed-off-by: Jari Aalto <jari.aalto@cante.net>
 ---
- doc/cscope.1 |   33 ++++++++++++++++-----------------
- 1 files changed, 16 insertions(+), 17 deletions(-)
+ doc/cscope.1 | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
 diff --git a/doc/cscope.1 b/doc/cscope.1
 index 6a3a86b..26a153e 100644
@@ -128,6 +123,3 @@ index 6a3a86b..26a153e 100644
   #endif
   ;
  .PP
--- 
-1.7.0
-

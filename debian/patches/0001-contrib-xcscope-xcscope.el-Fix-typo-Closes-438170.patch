@@ -1,16 +1,11 @@
-From d847996d6d4f9f9c4e78d237c3ccb58619642865 Mon Sep 17 00:00:00 2001
 From: Jari Aalto <jari.aalto@cante.net>
 Date: Sat, 8 May 2010 20:14:55 +0300
-Subject: [PATCH] contrib/xcscope/xcscope.el: Fix typo Closes: #438170)
-Organization: Private
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-
+Subject: contrib/xcscope/xcscope.el: Fix typo Closes: #438170)
 
 Signed-off-by: Jari Aalto <jari.aalto@cante.net>
 ---
- contrib/xcscope/xcscope.el |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ contrib/xcscope/xcscope.el | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/contrib/xcscope/xcscope.el b/contrib/xcscope/xcscope.el
 index ce382a4..2a1098c 100644
@@ -25,6 +20,3 @@ index ce382a4..2a1098c 100644
  ;;
  ;; 6. Restart (X)Emacs.  That's it.
  ;;
--- 
-1.7.0
-

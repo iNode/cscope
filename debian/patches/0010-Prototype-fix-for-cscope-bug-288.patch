@@ -1,0 +1,32 @@
+From: Dima Kogan <dima@secretsauce.net>
+Date: Sat, 10 Aug 2013 23:53:46 -0700
+Subject: Prototype fix for cscope bug 288
+
+This bug URL is
+
+https://sourceforge.net/p/cscope/bugs/288/
+
+The essense is that when looking at code such as
+
+ #define x extern
+ int ef;
+
+cscope gets confused, thinks the 'extern' applies to 'int ef' and doesn't report
+this definition of 'ef' as the global definition
+---
+ src/fscanner.l | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/fscanner.l b/src/fscanner.l
+index 2b264d3..364c451 100644
+--- a/src/fscanner.l
++++ b/src/fscanner.l
+@@ -645,7 +645,7 @@ if{wsnl}*\(	{ 	/* ignore 'if' */
+ 				   tag isn't marked as the typedef name) */
+ 				else if (s == enumtext || s == structtext || s == uniontext) {
+ 					/* do nothing */
+-				} else if (s == externtext) {
++				} else if (s == externtext && ppdefine == NO) {
+ 					/* if an external definition */
+ 					externalbraces = braces;
+ 					external = YES;

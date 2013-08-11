@@ -1,0 +1,25 @@
+From: Dima Kogan <dima@secretsauce.net>
+Date: Mon, 5 Aug 2013 13:30:47 -0700
+Subject: "return" binding now works in both graphical and tty emacs modes
+
+This resolves the following tickets:
+
+http://sourceforge.net/p/cscope/bugs/242/
+http://sourceforge.net/p/cscope/patches/66/
+---
+ contrib/xcscope/xcscope.el | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/contrib/xcscope/xcscope.el b/contrib/xcscope/xcscope.el
+index 08d0f16..4c84164 100644
+--- a/contrib/xcscope/xcscope.el
++++ b/contrib/xcscope/xcscope.el
+@@ -914,7 +914,7 @@ Must end with a newline.")
+   (if cscope-running-in-xemacs
+       (define-key cscope-list-entry-keymap [button2] 'cscope-mouse-select-entry-other-window)
+     (define-key cscope-list-entry-keymap [mouse-2] 'cscope-mouse-select-entry-other-window))
+-  (define-key cscope-list-entry-keymap [return] 'cscope-select-entry-other-window)
++  (define-key cscope-list-entry-keymap (kbd "C-m") 'cscope-select-entry-other-window)
+   (define-key cscope-list-entry-keymap " " 'cscope-show-entry-other-window)
+   (define-key cscope-list-entry-keymap "o" 'cscope-select-entry-one-window)
+   (define-key cscope-list-entry-keymap "q" 'cscope-bury-buffer)
