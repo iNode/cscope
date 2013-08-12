@@ -84,6 +84,9 @@ static	int	*maxifbraces;		/* maximum brace count within #if */
 static	int	*preifbraces;		/* brace count before #if */
 static	int	parens;			/* unmatched left parenthesis count */
 static	BOOL	ppdefine;		/* preprocessor define statement */
+static	BOOL	ppif;			/* preprocessor if... statement */
+static	BOOL	ppother;		/* unrecognized preprocessor statement
+					   (not #if.., #define, #include, #endif) */
 static	BOOL	pseudoelif;		/* pseudo-#elif */
 static	BOOL	oldtype;		/* next identifier is an old type */
 static	BOOL	rules;			/* lex/yacc rules */
@@ -283,6 +286,7 @@ wsnl		[ \t\r\v\f\n]|{comment}
 <IN_PREPROC>ifndef{ws}+	|
 <IN_PREPROC>ifdef{ws}+		|
 <IN_PREPROC>if{ws}+		{ /* #if directive */
+			ppif = YES;
 			elseelif = NO;
 			if (pseudoelif == YES) {
 				pseudoelif = NO;
@@ -405,7 +409,7 @@ wsnl		[ \t\r\v\f\n]|{comment}
 =		{	/* if a global definition initializer */
 			if (!my_yytext)
 				return(LEXERR);
-			if (global == YES && ppdefine == NO && my_yytext[0] != '#') {
+			if (global == YES && ppdefine == NO && ppif == NO && ppother == NO) {
 				initializerbraces = braces;
 				initializer = YES;
 			}
@@ -415,7 +419,7 @@ wsnl		[ \t\r\v\f\n]|{comment}
 :		{	/* a if global structure field */
 			if (!my_yytext)
 				return(LEXERR);
-			if (global == YES && ppdefine == NO && my_yytext[0] != '#') {
+			if (global == YES && ppdefine == NO && ppif == NO && ppother == NO) {
 				structfield = YES;
 			}
 			goto more;
@@ -472,6 +476,7 @@ wsnl		[ \t\r\v\f\n]|{comment}
 			/* NOTREACHED */
 		}
 <IN_PREPROC>\n	{   /* unknown preprocessor line */
+			ppother = YES;
 			BEGIN(INITIAL);
                         ++myylineno;
 			goto more;
@@ -479,6 +484,7 @@ wsnl		[ \t\r\v\f\n]|{comment}
 		}
 <IN_PREPROC>.		 |
 <IN_PREPROC>{identifier}	{   /* unknown preprocessor line */
+			ppother = YES;
 			BEGIN(INITIAL);
 			goto more;
 			/* NOTREACHED */
@@ -548,7 +554,8 @@ if{wsnl}*\(	{ 	/* ignore 'if' */
 			 * reason for the parsing bug concerning function pointer usage,
 			 * I suspect. --- I think my new special-case rule for 'if'
 			 * could be helpful in removing that limitation */
-			if ((braces == 0 && ppdefine == NO && my_yytext[0] != '#' && rules == NO) ||
+			if ((braces == 0 && ppdefine == NO && ppif == NO && ppother == NO &&
+			     rules == NO) ||
 			    (braces == 1 && classdef == YES)) {
 				fcndef = YES;
 				token = FCNDEF;
@@ -578,7 +585,7 @@ if{wsnl}*\(	{ 	/* ignore 'if' */
 .|\n	{		/* general identifer usage */
 			char	*s;
 
-			if (global == YES && ppdefine == NO && my_yytext[0] != '#' &&
+			if (global == YES && ppdefine == NO && ppif == NO && ppother == NO &&
 			    external == NO && initializer == NO && 
 			    arraydimension == NO && structfield == NO &&
 			    template == NO && fcndef == NO) {
@@ -645,7 +652,7 @@ if{wsnl}*\(	{ 	/* ignore 'if' */
 				   tag isn't marked as the typedef name) */
 				else if (s == enumtext || s == structtext || s == uniontext) {
 					/* do nothing */
-				} else if (s == externtext && ppdefine == NO) {
+				} else if (s == externtext && ppdefine == NO && ppif == NO && ppother == NO) {
 					/* if an external definition */
 					externalbraces = braces;
 					external = YES;
@@ -703,8 +710,10 @@ if{wsnl}*\(	{ 	/* ignore 'if' */
 			/* NOTREACHED */
 		}
 \n		{	/* end of the line */
-			if (ppdefine == YES) {	/* end of a #define */
+			if (ppdefine == YES || ppif == YES || ppother == YES) {	/* end of a #define/#if... */
 				ppdefine = NO;
+				ppif = NO;
+				ppother = NO;
 				yyless(yyleng - 1);
 				last = first;
 				my_yymore();
@@ -813,7 +822,7 @@ if{wsnl}*\(	{ 	/* ignore 'if' */
 "*"+[^*/\n]*	; /* do nothing */
 [^*\n]*\n		|
 "*"+[^*/\n]*\n	{
-			if (ppdefine == NO) {
+			if (ppdefine == NO && ppif == NO && ppother == NO) {
 				goto eol;
 			} else {
 				++myylineno;
@@ -872,6 +881,9 @@ initscanner(char *srcfile)
 	lex = NO;		/* lex file */
 	parens = 0;		/* unmatched left parenthesis count */
 	ppdefine = NO;		/* preprocessor define statement */
+	ppif = NO;		/* preprocessor if... statement */
+	ppother = NO;		/* unrecognized preprocessor statement
+				   (not #if.., #define, #include, #endif) */
 	pseudoelif = NO;	/* pseudo-#elif */
 	oldtype = NO;		/* next identifier is an old type */
 	rules = NO;		/* lex/yacc rules */
