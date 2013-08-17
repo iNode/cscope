@@ -315,8 +315,23 @@ cscope: -q option mismatch between command line and old symbol database\n");
 	}
 	/* the old cross-reference is up-to-date */
 	/* so get the list of included files */
-	while (i++ < oldnum && fgets(oldname, sizeof(oldname), oldrefs)) {
-	    addsrcfile(oldname);
+	while (i < oldnum && fgets(oldname, sizeof(oldname), oldrefs)) {
+
+	    // The filenames almost certainly have trailing newlines. I strip
+	    // those out here
+	    int len = strlen( oldname );
+	    if( len == 0 ) continue;
+
+	    if( oldname[len-1] == '\n' )
+	    {
+		oldname[len-1] = '\0';
+		len--;
+	    }
+	    if( len > 0 )
+	    {
+		addsrcfile(oldname);
+		i++;
+	    }
 	}
 	fclose(oldrefs);
 	return;
